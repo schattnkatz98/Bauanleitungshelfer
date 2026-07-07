@@ -1,0 +1,506 @@
+﻿<Window x:Class="WpfApp1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Bauplan Manager"
+        Height="500"
+        Width="995"
+        MinHeight="450"
+        MinWidth="850"
+        Icon="/Assets/dragon.png"
+        Background="#0f172b">
+
+    <Window.Resources>
+        <Style x:Key="SidebarButtonStyle" TargetType="Button">
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#D1D5DB"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="Cursor" Value="Hand"/>
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="ButtonBorder"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="0"
+                            Padding="{TemplateBinding Padding}">
+
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+
+                            <!-- Hover -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ButtonBorder"
+                                    Property="Background"
+                                    Value="#1F2937"/>
+                                <Setter Property="Foreground"
+                                    Value="White"/>
+                            </Trigger>
+
+                            <!-- Klick gedrückt -->
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="ButtonBorder"
+                                    Property="Background"
+                                    Value="#7C3AED"/>
+                                <Setter Property="Foreground"
+                                    Value="White"/>
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+        <Style TargetType="{x:Type ScrollBar}">
+            <Setter Property="Width" Value="8"/>
+            <Setter Property="MinWidth" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ScrollBar}">
+                        <Grid Background="Transparent"
+                      Width="{TemplateBinding Width}"
+                      HorizontalAlignment="Center">
+
+                            <Track x:Name="PART_Track"
+                           IsDirectionReversed="True">
+
+                                <Track.Thumb>
+                                    <Thumb>
+                                        <Thumb.Template>
+                                            <ControlTemplate TargetType="{x:Type Thumb}">
+                                                <Border Width="6"
+                                                Background="#7C3AED"
+                                                CornerRadius="4"
+                                                HorizontalAlignment="Center"/>
+                                            </ControlTemplate>
+                                        </Thumb.Template>
+                                    </Thumb>
+                                </Track.Thumb>
+
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="CardBorderStyle" TargetType="Border">
+            <Setter Property="Width" Value="210"/>
+            <Setter Property="MinHeight" Value="160"/>
+            <Setter Property="Margin" Value="0,0,15,15"/>
+            <Setter Property="Padding" Value="16"/>
+            <Setter Property="Background" Value="GhostWhite"/>
+            <Setter Property="BorderBrush" Value="#8e51ff"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="10"/>
+        </Style>
+
+        <DataTemplate x:Key="ItemCardTemplate">
+            <Border Style="{StaticResource CardBorderStyle}">
+                <StackPanel>
+                    <TextBlock Text="{Binding Name}"
+                       FontSize="20"
+                       FontWeight="Bold"
+                       TextWrapping="Wrap"/>
+
+                    <TextBlock Text="Bauteil-Info:"
+                       FontSize="14"
+                       FontWeight="Bold"
+                       Margin="0,18,0,8"/>
+
+                    <TextBlock Text="{Binding Info}"
+                       FontSize="13"
+                       TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+
+        <DataTemplate x:Key="RecipeCardTemplate">
+            <Border Style="{StaticResource CardBorderStyle}">
+                <StackPanel>
+                    <TextBlock Text="{Binding Name}"
+                       FontSize="20"
+                       FontWeight="Bold"
+                       TextWrapping="Wrap"/>
+
+                    <TextBlock Text="Benötigte Materialien:"
+                       FontSize="14"
+                       FontWeight="Bold"
+                       Margin="0,18,0,8"/>
+
+                    <TextBlock Text="{Binding Materials}"
+                       FontSize="13"
+                       TextWrapping="Wrap"/>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="220"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!--#F3F3F3-->
+        <!-- Linke Sidebar -->
+        <Border Grid.Column="0"
+        Background="#111827"
+        Padding="0">
+
+            <StackPanel>
+
+                <!-- App Titel -->
+                <StackPanel Orientation="Horizontal"
+                    Margin="0,0,0,25"/>
+                <Button Height="42"
+                Tag="Profil"
+                Style="{StaticResource SidebarButtonStyle}"
+                Background="Transparent"
+                Foreground="#D1D5DB"
+                BorderThickness="0"
+                HorizontalContentAlignment="Stretch"
+                Click="SidebarButton_Click">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="55"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Image Source="/Assets/user.png"
+                               Grid.Column="0"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Width="20"
+                               Height="20"
+                               Margin="0"/>
+
+                        <TextBlock Text="Profil"
+                                   Grid.Column="1"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Center"
+                                   FontSize="14"/>
+                    </Grid>
+                </Button>
+
+
+                <!-- Nav Item: Bauteile -->
+                <Button Tag="Bauteile"
+                        Height="42"
+                        Style="{StaticResource SidebarButtonStyle}"
+                        Margin="0,0,0,8"
+                        Background="Transparent"
+                        Foreground="#D1D5DB"
+                        BorderThickness="0"
+                        HorizontalContentAlignment="Stretch"
+                        Click="SidebarButton_Click">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="55"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Image Grid.Column="0"
+                               Source="/Assets/book-open.png"
+                               Width="20"
+                               Height="20"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               />
+
+                        <TextBlock Text="Bauteile"
+                                   Grid.Column="1"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Center"
+                                   FontSize="14"/>
+                    </Grid>
+                </Button>
+
+
+                <!-- Nav Item: Module -->
+
+
+                <!-- Nav Item: Anleitungen -->
+                <Button Height="42"
+                Tag="Anleitungen"
+                Style="{StaticResource SidebarButtonStyle}"
+                Margin="0,0,0,8"
+                Background="Transparent"
+                Foreground="#D1D5DB"
+                BorderThickness="0"
+                HorizontalContentAlignment="Stretch"
+                Click="SidebarButton_Click">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="55"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Image Source="/Assets/puzzle.png"
+                               Grid.Column="0"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Width="20"
+                               Height="20"
+                               Margin="0"/>
+
+                        <TextBlock Text="Anleitungen"
+                                   Grid.Column="1"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Center"
+                                   FontSize="14"/>
+                    </Grid>
+                </Button>
+
+
+                <!-- Nav Item: Einstellungen -->
+                <Button Height="42"
+                Tag="Einstellungen"
+                Style="{StaticResource SidebarButtonStyle}"
+                Margin="0,0,0,8"
+                Background="Transparent"
+                Foreground="#D1D5DB"
+                BorderThickness="0"
+                HorizontalContentAlignment="Stretch"
+                Click="SidebarButton_Click">
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="55"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Image Source="/Assets/settings.png"
+                               Grid.Column="0"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Width="20"
+                               Height="20"
+                               Margin="0"/>
+
+                        <TextBlock Text="Einstellungen"
+                                   Grid.Column="1"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Left"
+                                   FontSize="14"/>
+                    </Grid>
+                </Button>
+
+            </StackPanel>
+        </Border>
+
+
+        <!-- Mittlerer Hauptbereich -->
+        <Grid x:Name="AnleitungenView"
+              Grid.Column="1"
+              Visibility="Collapsed"
+              d:Visibility="Collapsed"
+              Margin="25">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+
+            <!-- Suchleiste -->
+            <Border Grid.Row="0"
+                    Height="40"
+                    Margin="0,0,0,15"
+                    Background="GhostWhite"
+                    BorderBrush="#8e51ff"
+                    BorderThickness="1"
+                    CornerRadius="10">
+
+                <TextBox x:Name="SearchBox"
+                         FontSize="14"
+                         Padding="10,0"
+                         Background="Transparent"
+                         BorderThickness="0"
+                         Foreground="Black"
+                         CaretBrush="Black"
+                         VerticalContentAlignment="Center"
+                         KeyDown="SearchBox_KeyDown"/>
+
+            </Border>
+
+
+            <!-- Scrollbarer Card-Bereich -->
+            <ScrollViewer Grid.Row="1"
+              VerticalScrollBarVisibility="Auto"
+              HorizontalScrollBarVisibility="Disabled">
+
+                <ItemsControl x:Name="RecipeCardsControl"
+                              ItemTemplate="{StaticResource RecipeCardTemplate}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+
+            </ScrollViewer>
+        </Grid>
+
+        <Grid x:Name="ProfilView"
+      Grid.Column="1"
+      Grid.ColumnSpan="2"
+      Visibility="Collapsed"
+      d:Visibility="Collapsed"
+      Margin="25">
+
+            <StackPanel>
+                <TextBlock Text="User Stats"
+                   Foreground="White"
+                   FontSize="24"
+                   FontWeight="Bold"
+                   Margin="0,0,0,20"/>
+
+                <TextBlock Text="Bauteile:"
+                   Foreground="White"/>
+            </StackPanel>
+        </Grid>
+
+        <Grid x:Name="BauteileView"
+      Grid.Column="1"
+      Grid.ColumnSpan="2"
+      Visibility="Visible"
+      Margin="25">
+
+            <Border Background="Transparent"
+            BorderBrush="#8e51ff"
+            BorderThickness="1"
+            CornerRadius="10"
+            Padding="16">
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Tabellenkopf -->
+                    <Grid Grid.Row="0"
+                  Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="160"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="Bauteil"
+                           FontWeight="Bold"
+                           Foreground="#D1D5DB"
+                           FontSize="16"/>
+
+                        <TextBlock Grid.Column="1"
+                           Text="Anzahl"
+                           Foreground="#D1D5DB"
+                           FontWeight="Bold"
+                           FontSize="16"
+                           HorizontalAlignment="Center"/>
+                    </Grid>
+
+                    <!-- Liste -->
+                    <ScrollViewer Grid.Row="1"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+
+                        <ItemsControl x:Name="InventoryItemsControl">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="#E5E7EB"
+                                    BorderThickness="0,1,0,0"
+                                    Padding="0,10">
+
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="160"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock Text="{Binding Name}"
+                                               FontSize="14"
+                                               Foreground="#D1D5DB"
+                                               VerticalAlignment="Center"/>
+
+                                            <StackPanel Grid.Column="1"
+                                                Orientation="Horizontal"
+                                                HorizontalAlignment="Center">
+
+                                                <Button Content="-"
+                                                Width="28"
+                                                Height="28"
+                                                Click="DecreaseAmount_Click"/>
+
+                                                <TextBlock Text="{Binding Amount}"
+                                                   Width="45"
+                                                   TextAlignment="Center"
+                                                   Foreground="#D1D5DB"
+                                                   VerticalAlignment="Center"
+                                                   FontSize="14"/>
+
+                                                <Button Content="+"
+                                                Width="28"
+                                                Height="28"
+                                                Click="IncreaseAmount_Click"/>
+
+                                            </StackPanel>
+                                        </Grid>
+
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                    </ScrollViewer>
+                </Grid>
+
+            </Border>
+        </Grid>
+
+        <Grid x:Name="EinstellungenView"
+Grid.Column="1"
+Grid.ColumnSpan="2"
+Visibility="Collapsed"
+Margin="25">
+
+            <StackPanel>
+                <TextBlock Text="Neues scherenteil anlegen"
+             Foreground="White"
+             FontSize="24"
+             FontWeight="Bold"
+             Margin="0,0,0,20"/>
+
+                <TextBlock Text="Name"
+             Foreground="White"/>
+
+                <TextBox x:Name="a"
+           Height="40"
+           Margin="0,5,0,15"/>
+
+                <Button Content="test"
+          Width="120"
+          Height="40"/>
+            </StackPanel>
+        </Grid>
+        <!-- Rechte Item-Liste -->
+
+    </Grid>
+</Window>

@@ -1,0 +1,47 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\book-open.png" />
+    <None Remove="Assets\dragon.png" />
+    <None Remove="Assets\puzzle.png" />
+    <None Remove="Assets\settings.png" />
+    <None Remove="Assets\shield-question-mark.png" />
+    <None Remove="Assets\square-pen.png" />
+    <None Remove="Assets\user.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\shield-question-mark.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.9" />
+    <PackageReference Include="WPF-UI" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\book-open.png" />
+    <Resource Include="Assets\dragon.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\puzzle.png" />
+    <Resource Include="Assets\settings.png" />
+    <Resource Include="Assets\square-pen.png" />
+    <Resource Include="Assets\user.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="schema.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
