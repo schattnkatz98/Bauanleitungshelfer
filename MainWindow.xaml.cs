@@ -57,7 +57,14 @@ namespace WpfApp1
                     Name = reader["name"].ToString() ?? "",
                     Amount = 0
                 });
+
             }
+
+            foreach (InventoryItem item in inventoryItems)
+            {
+                Debug.WriteLine($"{item.Name}, Amount: {item.Amount}");
+            }
+
 
             InventoryItemsControl.ItemsSource = inventoryItems;
         }
