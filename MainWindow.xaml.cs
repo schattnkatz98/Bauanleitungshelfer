@@ -95,6 +95,7 @@ namespace WpfApp1
             Button button = (Button)sender;
             InventoryItem item = (InventoryItem)button.DataContext;
             item.Amount++;
+            RefreshProfileStats();
         }
 
         private void DecreaseAmount_Click(object sender, RoutedEventArgs e)
@@ -106,7 +107,54 @@ namespace WpfApp1
             {
                 item.Amount--;
             }
+
+            RefreshProfileStats();
         }
+
+        private void RefreshProfileStats()
+        {
+            var ownedItems = inventoryItems
+                .Where(item => item.Amount > 0)
+                .ToList();
+
+            ProfileInventoryControl.ItemsSource = ownedItems;
+
+            int totalAmount = ownedItems.Sum(item => item.Amount);
+
+            InventoryItem? mostCommonItem = ownedItems
+                .OrderByDescending(item => item.Amount)
+                .FirstOrDefault();
+
+            InventoryItem? rarestItem = ownedItems
+                .OrderBy(item => item.Amount)
+                .FirstOrDefault();
+
+            TotalOwnedText.Text = totalAmount.ToString();
+
+            if (mostCommonItem != null)
+            {
+                MostCommonItemText.Text = mostCommonItem.Name;
+                MostCommonAmountText.Text = mostCommonItem.Amount + "x";
+            }
+            else
+            {
+                MostCommonItemText.Text = "-";
+                MostCommonAmountText.Text = "0x";
+            }
+
+            if (rarestItem != null)
+            {
+                RarestItemText.Text = rarestItem.Name;
+                RarestAmountText.Text = rarestItem.Amount + "x";
+            }
+            else
+            {
+                RarestItemText.Text = "-";
+                RarestAmountText.Text = "0x";
+            }
+        }
+
+
 
         private void CreateCards(SqliteConnection connection)
         {
@@ -151,6 +199,7 @@ namespace WpfApp1
                     Debug.WriteLine("Home view shown");
                     break;
                 case "Profil":
+                    RefreshProfileStats();
                     ProfilView.Visibility = Visibility.Visible;
                     Debug.WriteLine("profil view shown");
                     break;

@@ -102,8 +102,8 @@
             <Setter Property="Width" Value="210"/>
             <Setter Property="MinHeight" Value="160"/>
             <Setter Property="Margin" Value="0,0,15,15"/>
-            <Setter Property="Padding" Value="16"/>
-            <Setter Property="Background" Value="GhostWhite"/>
+            <Setter Property="Padding" Value="18"/>
+            <Setter Property="Background" Value="#151f33"/>
             <Setter Property="BorderBrush" Value="#8e51ff"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="CornerRadius" Value="10"/>
@@ -168,15 +168,18 @@
                     <TextBlock Text="{Binding Name}"
                                FontSize="20"
                                FontWeight="Bold"
+                               Foreground="#F8FAFC"
                                TextWrapping="Wrap"/>
 
                     <TextBlock Text="Benötigte Materialien:"
                                FontSize="14"
                                FontWeight="Bold"
+                               Foreground="#CBD5E1"
                                Margin="0,18,0,8"/>
 
                     <TextBlock Text="{Binding Materials}"
                                FontSize="13"
+                               Foreground="#CBD5E1"
                                TextWrapping="Wrap"/>
                 </StackPanel>
             </Border>
@@ -326,7 +329,7 @@
             <Border Grid.Row="0"
                     Height="40"
                     Margin="0,0,0,15"
-                    Background="GhostWhite"
+                    Background="Transparent"
                     BorderBrush="#8e51ff"
                     BorderThickness="1"
                     CornerRadius="10">
@@ -336,8 +339,8 @@
                          Padding="10,0"
                          Background="Transparent"
                          BorderThickness="0"
-                         Foreground="Black"
-                         CaretBrush="Black"
+                         Foreground="White"
+                         CaretBrush="White"
                          VerticalContentAlignment="Center"
                          KeyDown="SearchBox_KeyDown"/>
             </Border>
@@ -389,11 +392,11 @@
                                    Style="{StaticResource StatLabelTextStyle}"/>
 
                         <TextBlock x:Name="RarestItemText"
-                                   Text="Prisma Stein"
+                                   Text=""
                                    Style="{StaticResource StatValueTextStyle}"/>
 
                         <TextBlock x:Name="RarestAmountText"
-                                   Text="1x"
+                                   Text=""
                                    Style="{StaticResource StatSubTextStyle}"/>
                     </StackPanel>
                 </Border>
@@ -406,10 +409,10 @@
                                    Style="{StaticResource StatLabelTextStyle}"/>
 
                         <TextBlock x:Name="TotalOwnedText"
-                                   Text="80"
+                                   Text=""
                                    Style="{StaticResource StatValueTextStyle}"/>
 
-                        <TextBlock Text="Items insgesamt"
+                        <TextBlock Text=""
                                    Style="{StaticResource StatSubTextStyle}"/>
                     </StackPanel>
                 </Border>
@@ -424,11 +427,11 @@
                                    Style="{StaticResource StatLabelTextStyle}"/>
 
                         <TextBlock x:Name="MostCommonItemText"
-                                   Text="2x4 Stein Rot"
+                                   Text=""
                                    Style="{StaticResource StatValueTextStyle}"/>
 
                         <TextBlock x:Name="MostCommonAmountText"
-                                   Text="12x"
+                                   Text=""
                                    Style="{StaticResource StatSubTextStyle}"/>
                     </StackPanel>
                 </Border>
