@@ -54,6 +54,7 @@ namespace WpfApp1
             {
                 inventoryItems.Add(new InventoryItem
                 {
+                    Id = Convert.ToInt32(reader["id"]),
                     Name = reader["name"].ToString() ?? "",
                     Amount = 0
                 });
@@ -71,22 +72,62 @@ namespace WpfApp1
 
         private void LoadBuildSetCards(SqliteConnection connection)
         {
+            Dictionary<int, RecipeCard> recipeMap = new();
+
             using SqliteCommand cmd = connection.CreateCommand();
-            cmd.CommandText = "SELECT \r\n    ri.name AS result_Item,\r\n    GROUP_CONCAT('- ' || rc.component_amount || 'x | ' || ci.name, CHAR(10)) AS component_items\r\nFROM recipe_components AS rc\r\nINNER JOIN recipe AS r ON rc.recipe = r.id\r\nINNER JOIN item AS ri ON r.result = ri.id\r\nINNER JOIN item AS ci ON rc.component = ci.id\r\nGROUP BY r.id, ri.name;";
+            cmd.CommandText = @"
+            SELECT 
+                r.id AS recipe_id,
+                ri.name AS recipe_name,
+                ci.id AS component_id,
+                ci.name AS component_name,
+                rc.component_amount AS required_amount
+            FROM recipe_components AS rc
+            INNER JOIN recipe AS r ON rc.recipe = r.id
+            INNER JOIN item AS ri ON r.result = ri.id
+            INNER JOIN item AS ci ON rc.component = ci.id
+            ORDER BY r.id;";
+
             using SqliteDataReader reader = cmd.ExecuteReader();
 
             while (reader.Read())
             {
-                string ItemName = reader["result_Item"].ToString();
-                string ItemMaterials = reader["component_items"].ToString();
+                int recipeId = Convert.ToInt32(reader["recipe_id"].ToString());
+                string ItemName = reader["recipe_name"].ToString();
 
-                recipeCards.Add(new RecipeCard
+
+                if (!recipeMap.ContainsKey(recipeId))
                 {
-                    Name = $"{ItemName}",
-                    Materials = $"{ItemMaterials}"
+                    RecipeCard card = new RecipeCard
+                    {
+                        Name = ItemName
+                    };
+
+                    recipeMap.Add(recipeId, card);
+                    recipeCards.Add(card);
+                }
+
+                recipeMap[recipeId].Materials.Add(new RecipeMaterial
+                {
+                    ItemId = Convert.ToInt32(reader["component_id"]),
+                    Name = reader["component_name"].ToString() ?? "",
+                    RequiredAmount = Convert.ToInt32(reader["required_amount"])
                 });
 
-                i++;
+            }
+        }
+
+        private void RefreshRecipeMaterialStatus()
+        {
+            foreach (RecipeCard recipe in recipeCards)
+            {
+                foreach (RecipeMaterial material in recipe.Materials)
+                {
+                    InventoryItem? ownedItem = inventoryItems
+                        .FirstOrDefault(item => item.Id == material.ItemId);
+
+                    material.IsCovered = ownedItem != null && ownedItem.Amount >= material.RequiredAmount;
+                }
             }
         }
 
@@ -95,6 +136,7 @@ namespace WpfApp1
             Button button = (Button)sender;
             InventoryItem item = (InventoryItem)button.DataContext;
             item.Amount++;
+            RefreshRecipeMaterialStatus();
             RefreshProfileStats();
         }
 
@@ -107,7 +149,7 @@ namespace WpfApp1
             {
                 item.Amount--;
             }
-
+            RefreshRecipeMaterialStatus();
             RefreshProfileStats();
         }
 
@@ -156,11 +198,32 @@ namespace WpfApp1
 
 
 
+
         private void CreateCards(SqliteConnection connection)
         {
             LoadBuildSetCards(connection);
             LoadItemCards(connection);
+            RefreshRecipeMaterialStatus();
             RecipeCardsControl.ItemsSource = recipeCards;
+        }
+
+        private void ResetOwnedItems()
+        {
+            foreach (InventoryItem item in inventoryItems)
+            {
+                item.Amount++;
+            }
+            RefreshRecipeMaterialStatus();
+            RefreshProfileStats();
+        }
+
+        private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.F)
+            {
+                ResetOwnedItems();
+                e.Handled = true;
+            }
         }
 
         private void SearchBox_KeyDown(object sender, KeyEventArgs e)
@@ -218,7 +281,30 @@ namespace WpfApp1
         public class RecipeCard
         {
             public string Name { get; set; } = "";
-            public string Materials { get; set; } = "";
+            public List<RecipeMaterial> Materials { get; set; } = new();
+        }
+
+        public class RecipeMaterial : INotifyPropertyChanged
+        {
+            public int ItemId { get; set; }
+            public string Name { get; set; } = "";
+            public int RequiredAmount { get; set; }
+
+            private bool isCovered;
+
+            public bool IsCovered
+            {
+                get => isCovered;
+                set
+                {
+                    isCovered = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsCovered)));
+                }
+            }
+
+            public string DisplayText => $"- {RequiredAmount}x | {Name}";
+
+            public event PropertyChangedEventHandler? PropertyChanged;
         }
 
         //public class ItemCard
@@ -227,8 +313,12 @@ namespace WpfApp1
         //    public string Info { get; set; } = "";
         //}
 
+
+
+
         public class InventoryItem : INotifyPropertyChanged
         {
+            public int Id { get; set; }
             public string Name { get; set; } = "";
 
             private int amount;

@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
+        PreviewKeyDown="Window_PreviewKeyDown"
         Title="Bauplan Manager"
         Height="500"
         Width="995"
@@ -138,6 +139,52 @@
             <Setter Property="FontSize" Value="14"/>
         </Style>
 
+        <Style x:Key="CounterButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="28"/>
+            <Setter Property="Height" Value="28"/>
+            <Setter Property="Background" Value="#111827"/>
+            <Setter Property="Foreground" Value="#D1D5DB"/>
+            <Setter Property="BorderBrush" Value="#8e51ff"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="ButtonBorder"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="6">
+
+                            <ContentPresenter HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"/>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ButtonBorder"
+                                Property="Background"
+                                Value="#1F2937"/>
+                                <Setter Property="Foreground"
+                                Value="White"/>
+                            </Trigger>
+
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="ButtonBorder"
+                                Property="Background"
+                                Value="#7C3AED"/>
+                                <Setter Property="Foreground"
+                                Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
 
         <!-- Item Card Template -->
         <DataTemplate x:Key="ItemCardTemplate">
@@ -166,21 +213,41 @@
             <Border Style="{StaticResource CardBorderStyle}">
                 <StackPanel>
                     <TextBlock Text="{Binding Name}"
-                               FontSize="20"
-                               FontWeight="Bold"
-                               Foreground="#F8FAFC"
-                               TextWrapping="Wrap"/>
+                       FontSize="20"
+                       FontWeight="Bold"
+                       Foreground="#F8FAFC"
+                       TextWrapping="Wrap"/>
 
                     <TextBlock Text="Benötigte Materialien:"
-                               FontSize="14"
-                               FontWeight="Bold"
-                               Foreground="#CBD5E1"
-                               Margin="0,18,0,8"/>
+                       FontSize="14"
+                       FontWeight="Bold"
+                       Foreground="#F8FAFC"
+                       Margin="0,18,0,8"/>
 
-                    <TextBlock Text="{Binding Materials}"
-                               FontSize="13"
-                               Foreground="#CBD5E1"
-                               TextWrapping="Wrap"/>
+                    <ItemsControl ItemsSource="{Binding Materials}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding DisplayText}"
+                                   FontSize="13"
+                                   TextWrapping="Wrap">
+
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Foreground" Value="#CBD5E1"/>
+
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsCovered}" Value="True">
+                                                    <Setter Property="Foreground" Value="#22C55E"/>
+                                                    <Setter Property="TextDecorations" Value="Strikethrough"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+
+                                </TextBlock>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                 </StackPanel>
             </Border>
         </DataTemplate>
@@ -317,8 +384,8 @@
         <!-- Anleitungen View -->
         <Grid x:Name="AnleitungenView"
               Grid.Column="1"
-              Visibility="Collapsed"
-              d:Visibility="Collapsed"
+              Visibility="Visible"
+              d:Visibility="Visible"
               Margin="25">
 
             <Grid.RowDefinitions>
@@ -364,8 +431,8 @@
         <!-- Profil View -->
         <Grid x:Name="ProfilView"
               Grid.Column="1"
-              Visibility="Visible"
-              d:Visibility="Visible"
+              Visibility="Collapsed"
+              d:Visibility="Collapsed"
               Margin="25">
 
             <Grid.RowDefinitions>
@@ -481,6 +548,7 @@
                                                    Text="{Binding Amount}"
                                                    Foreground="#A78BFA"
                                                    FontWeight="Bold"
+                                                   Padding="0,0,10,0"
                                                    HorizontalAlignment="Right"/>
                                     </Grid>
                                 </DataTemplate>
@@ -542,9 +610,10 @@
                         <ItemsControl x:Name="InventoryItemsControl">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border BorderBrush="#E5E7EB"
-                                            BorderThickness="0,1,0,0"
-                                            Padding="0,10">
+                                    <Border Background="Transparent"
+                                            BorderThickness="0"
+                                            Padding="0,10"
+                                            Margin="0,2">
 
                                         <Grid>
                                             <Grid.ColumnDefinitions>
@@ -563,8 +632,7 @@
                                                         HorizontalAlignment="Center">
 
                                                 <Button Content="-"
-                                                        Width="28"
-                                                        Height="28"
+                                                        Style="{StaticResource CounterButtonStyle}"
                                                         Click="DecreaseAmount_Click"/>
 
                                                 <TextBlock Text="{Binding Amount}"
@@ -575,8 +643,7 @@
                                                            FontSize="14"/>
 
                                                 <Button Content="+"
-                                                        Width="28"
-                                                        Height="28"
+                                                        Style="{StaticResource CounterButtonStyle}"
                                                         Click="IncreaseAmount_Click"/>
                                             </StackPanel>
                                         </Grid>
