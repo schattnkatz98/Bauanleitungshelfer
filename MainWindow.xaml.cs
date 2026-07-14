@@ -39,6 +39,7 @@ namespace WpfApp1
 
             CreateCards(connection);
             //Debug.WriteLine(string.Join(", ", items));
+            Debug.WriteLine("cards createt");
         }
 
         private void LoadItemCards(SqliteConnection connection)
