@@ -12,6 +12,7 @@
         WindowStyle="None"
         ResizeMode="CanResize"
         Background="#0B0C12"
+        SourceInitialized="Window_SourceInitialized"
         AllowsTransparency="False"
         PreviewKeyDown="Window_PreviewKeyDown">
 
@@ -274,7 +275,7 @@
         </DataTemplate>
     </Window.Resources>
 
-    <Border x:Name="WindowBorder" Background="{StaticResource BackgroundBrush}" BorderBrush="#252632" BorderThickness="1" CornerRadius="18">
+    <Border x:Name="WindowBorder" Background="{StaticResource BackgroundBrush}" BorderBrush="#252632" BorderThickness="1">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="60"/>
@@ -393,7 +394,7 @@
                     </Grid>
                 </Border>
 
-                <Grid x:Name="AnleitungenView" Grid.Column="1" Visibility="Visible" Margin="30,24,24,0">
+                <Grid x:Name="AnleitungenView" Grid.Column="1" Visibility="Collapsed" Margin="30,24,24,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
@@ -468,7 +469,7 @@
                     </ScrollViewer>
                 </Grid>
 
-                <Grid x:Name="ProfilView" Grid.Column="1" Visibility="Collapsed" Margin="30">
+                <Grid x:Name="ProfilView" Grid.Column="1" Visibility="Visible" Margin="30">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>

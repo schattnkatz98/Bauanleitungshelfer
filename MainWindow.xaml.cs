@@ -2,9 +2,11 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Interop;
 using Microsoft.Data.Sqlite;
 
 
@@ -215,7 +217,7 @@ namespace WpfApp1
         {
             foreach (InventoryItem item in inventoryItems)
             {
-                item.Amount = 0;
+                item.Amount++;
             }
             RefreshRecipeMaterialStatus();
             RefreshProfileStats();
@@ -230,7 +232,7 @@ namespace WpfApp1
                 e.Handled = true;
             }
 
-            if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.R)
+            if (e.Key == Key.F)
             {
                 ResetOwnedItems();
                 e.Handled = true;
@@ -354,6 +356,26 @@ namespace WpfApp1
             }
         }
 
+        [DllImport("dwmapi.dll")]
+        private static extern int DwmSetWindowAttribute(
+        IntPtr hwnd,
+        int attribute,
+        ref int value,
+        int size);
+
+        private void Window_SourceInitialized(object? sender, EventArgs e)
+        {
+            IntPtr hwnd = new WindowInteropHelper(this).Handle;
+
+            int roundCorners = 2;
+
+            DwmSetWindowAttribute(
+                hwnd,
+                33,
+                ref roundCorners,
+                sizeof(int));
+        }
+
         public class RecipeCard : INotifyPropertyChanged
         {
             public string Name { get; set; } = "";
@@ -362,9 +384,21 @@ namespace WpfApp1
             public int CoveredMaterialCount => Materials.Count(material => material.IsCovered);
             public int MaterialCount => Materials.Count;
             public bool IsBuildable => MaterialCount > 0 && CoveredMaterialCount == MaterialCount;
-            public double CoveragePercent => MaterialCount == 0
-                ? 0
-                : (double)CoveredMaterialCount / MaterialCount * 100;
+            public double CoveragePercent
+            {
+                get
+                {
+                    int requiredTotal = Materials.Sum(material => material.RequiredAmount);
+
+                    if (requiredTotal == 0)
+                        return 0;
+
+                    int coveredTotal = Materials.Sum(material =>
+                        Math.Min(material.OwnedAmount, material.RequiredAmount));
+
+                    return (double)coveredTotal / requiredTotal * 100;
+                }
+            }
             public string CoveragePercentText => $"{Math.Round(CoveragePercent)}%";
             public string CoverageText => $"{CoveredMaterialCount}/{MaterialCount} vorhanden";
             public string StatusText => IsBuildable ? "Baubar" : CoverageText;
