@@ -17,12 +17,10 @@ namespace WpfApp1
 
     public partial class MainWindow : Window
     {
-        private List<RecipeCard> recipeCards = new List<RecipeCard>();
+        private readonly List<RecipeCard> recipeCards = new();
         //private List<ItemCard> itemCards = new List<ItemCard>();
-        private ObservableCollection<InventoryItem> inventoryItems = new ObservableCollection<InventoryItem>();
+        private readonly ObservableCollection<InventoryItem> inventoryItems = new();
         //private List<string> items = new List<string>();
-        private int i = 0;
-
         public MainWindow()
         {
             InitializeComponent();
@@ -127,9 +125,13 @@ namespace WpfApp1
                     InventoryItem? ownedItem = inventoryItems
                         .FirstOrDefault(item => item.Id == material.ItemId);
 
-                    material.IsCovered = ownedItem != null && ownedItem.Amount >= material.RequiredAmount;
+                    material.OwnedAmount = ownedItem?.Amount ?? 0;
                 }
+
+                recipe.RefreshCoverage();
             }
+
+            RefreshRecipeSummary();
         }
 
         private void IncreaseAmount_Click(object sender, RoutedEventArgs e)
@@ -206,13 +208,14 @@ namespace WpfApp1
             LoadItemCards(connection);
             RefreshRecipeMaterialStatus();
             RecipeCardsControl.ItemsSource = recipeCards;
+            RefreshRecipeSummary();
         }
 
         private void ResetOwnedItems()
         {
             foreach (InventoryItem item in inventoryItems)
             {
-                item.Amount++;
+                item.Amount = 0;
             }
             RefreshRecipeMaterialStatus();
             RefreshProfileStats();
@@ -220,25 +223,97 @@ namespace WpfApp1
 
         private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.F)
+            if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.F)
+            {
+                SearchBox.Focus();
+                SearchBox.SelectAll();
+                e.Handled = true;
+            }
+
+            if (Keyboard.Modifiers == ModifierKeys.Control && e.Key == Key.R)
             {
                 ResetOwnedItems();
                 e.Handled = true;
             }
         }
 
+        private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            ApplyRecipeFilter();
+        }
+
         private void SearchBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
-                Debug.WriteLine("Search: " + SearchBox.Text);
+                ApplyRecipeFilter();
             }
 
             if (e.Key == Key.Escape)
             {
                 SearchBox.Text = string.Empty;
-                Debug.WriteLine("Search cleared");
+                ApplyRecipeFilter();
             }
+        }
+
+        private void ApplyRecipeFilter()
+        {
+            string searchText = SearchBox.Text.Trim();
+
+            List<RecipeCard> filteredRecipes = recipeCards
+                .Where(recipe => string.IsNullOrWhiteSpace(searchText)
+                    || recipe.Name.Contains(searchText, StringComparison.CurrentCultureIgnoreCase))
+                .ToList();
+
+            RecipeCardsControl.ItemsSource = filteredRecipes;
+            ResultCountText.Text = $"{filteredRecipes.Count} Ergebnisse";
+        }
+
+        private void RefreshRecipeSummary()
+        {
+            RecipeCountText.Text = recipeCards.Count.ToString();
+            BuildableCountText.Text = recipeCards.Count(recipe => recipe.IsBuildable).ToString();
+            MaterialCountText.Text = recipeCards
+                .SelectMany(recipe => recipe.Materials)
+                .Select(material => material.ItemId)
+                .Distinct()
+                .Count()
+                .ToString();
+
+            ResultCountText.Text = $"{recipeCards.Count} Ergebnisse";
+        }
+
+        private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ClickCount == 2)
+            {
+                ToggleWindowState();
+                return;
+            }
+
+            DragMove();
+        }
+
+        private void MinimizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
+        }
+
+        private void MaximizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            ToggleWindowState();
+        }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        private void ToggleWindowState()
+        {
+            WindowState = WindowState == WindowState.Maximized
+                ? WindowState.Normal
+                : WindowState.Maximized;
         }
 
         private void SidebarButton_Click(object sender, RoutedEventArgs e)
@@ -279,10 +354,40 @@ namespace WpfApp1
             }
         }
 
-        public class RecipeCard
+        public class RecipeCard : INotifyPropertyChanged
         {
             public string Name { get; set; } = "";
             public List<RecipeMaterial> Materials { get; set; } = new();
+
+            public int CoveredMaterialCount => Materials.Count(material => material.IsCovered);
+            public int MaterialCount => Materials.Count;
+            public bool IsBuildable => MaterialCount > 0 && CoveredMaterialCount == MaterialCount;
+            public double CoveragePercent => MaterialCount == 0
+                ? 0
+                : (double)CoveredMaterialCount / MaterialCount * 100;
+            public string CoveragePercentText => $"{Math.Round(CoveragePercent)}%";
+            public string CoverageText => $"{CoveredMaterialCount}/{MaterialCount} vorhanden";
+            public string StatusText => IsBuildable ? "Baubar" : CoverageText;
+            public string MaterialCountText => $"{MaterialCount} Materialien";
+
+            public void RefreshCoverage()
+            {
+                OnPropertyChanged(nameof(CoveredMaterialCount));
+                OnPropertyChanged(nameof(MaterialCount));
+                OnPropertyChanged(nameof(IsBuildable));
+                OnPropertyChanged(nameof(CoveragePercent));
+                OnPropertyChanged(nameof(CoveragePercentText));
+                OnPropertyChanged(nameof(CoverageText));
+                OnPropertyChanged(nameof(StatusText));
+                OnPropertyChanged(nameof(MaterialCountText));
+            }
+
+            private void OnPropertyChanged(string propertyName)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+
+            public event PropertyChangedEventHandler? PropertyChanged;
         }
 
         public class RecipeMaterial : INotifyPropertyChanged
@@ -292,18 +397,47 @@ namespace WpfApp1
             public int RequiredAmount { get; set; }
 
             private bool isCovered;
+            private int ownedAmount;
+
+            public int OwnedAmount
+            {
+                get => ownedAmount;
+                set
+                {
+                    if (ownedAmount == value)
+                    {
+                        return;
+                    }
+
+                    ownedAmount = value;
+                    IsCovered = ownedAmount >= RequiredAmount;
+                    OnPropertyChanged(nameof(OwnedAmount));
+                    OnPropertyChanged(nameof(AmountText));
+                }
+            }
 
             public bool IsCovered
             {
                 get => isCovered;
                 set
                 {
+                    if (isCovered == value)
+                    {
+                        return;
+                    }
+
                     isCovered = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsCovered)));
+                    OnPropertyChanged(nameof(IsCovered));
                 }
             }
 
             public string DisplayText => $"- {RequiredAmount}x | {Name}";
+            public string AmountText => $"{OwnedAmount} / {RequiredAmount}";
+
+            private void OnPropertyChanged(string propertyName)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
 
             public event PropertyChangedEventHandler? PropertyChanged;
         }

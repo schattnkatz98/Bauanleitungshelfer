@@ -4,55 +4,55 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        PreviewKeyDown="Window_PreviewKeyDown"
         Title="Bauplan Manager"
-        Height="500"
-        Width="995"
-        MinHeight="450"
-        MinWidth="850"
-        Icon="/Assets/dragon.png"
-        Background="#0f172b">
+        Width="1310"
+        Height="800"
+        MinWidth="1000"
+        MinHeight="650"
+        WindowStyle="None"
+        ResizeMode="CanResize"
+        Background="#0B0C12"
+        AllowsTransparency="False"
+        PreviewKeyDown="Window_PreviewKeyDown">
 
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="0" 
+                      ResizeBorderThickness="6" 
+                      GlassFrameThickness="0" 
+                      CornerRadius="0"/>
+    </WindowChrome.WindowChrome>
+    
+    
     <Window.Resources>
+        <SolidColorBrush x:Key="BackgroundBrush" Color="#0B0C12"/>
+        <SolidColorBrush x:Key="PanelBrush" Color="#0F1017"/>
+        <SolidColorBrush x:Key="CardBrush" Color="#14151E"/>
+        <SolidColorBrush x:Key="CardInnerBrush" Color="#171822"/>
+        <SolidColorBrush x:Key="BorderBrush" Color="#2B2C3A"/>
+        <SolidColorBrush x:Key="PurpleBrush" Color="#8B5CF6"/>
+        <SolidColorBrush x:Key="GreenBrush" Color="#34D399"/>
+        <SolidColorBrush x:Key="OrangeBrush" Color="#F59E0B"/>
+        <SolidColorBrush x:Key="PrimaryTextBrush" Color="#F8F8FB"/>
+        <SolidColorBrush x:Key="SecondaryTextBrush" Color="#808295"/>
 
-        <!-- Sidebar Button Style -->
-        <Style x:Key="SidebarButtonStyle" TargetType="Button">
-            <Setter Property="Height" Value="42"/>
-            <Setter Property="Margin" Value="0,0,0,8"/>
+        <Style x:Key="WindowButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="42"/>
+            <Setter Property="Height" Value="40"/>
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="#D1D5DB"/>
+            <Setter Property="Foreground" Value="#A0A2B4"/>
             <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Padding" Value="0"/>
-            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="FontSize" Value="15"/>
             <Setter Property="Cursor" Value="Hand"/>
-
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="ButtonBorder"
-                                Background="{TemplateBinding Background}"
-                                CornerRadius="0"
-                                Padding="{TemplateBinding Padding}">
-
-                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        <Border x:Name="Root" Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
-
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="ButtonBorder"
-                                        Property="Background"
-                                        Value="#1F2937"/>
-                                <Setter Property="Foreground"
-                                        Value="White"/>
-                            </Trigger>
-
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="ButtonBorder"
-                                        Property="Background"
-                                        Value="#7C3AED"/>
-                                <Setter Property="Foreground"
-                                        Value="White"/>
+                                <Setter TargetName="Root" Property="Background" Value="#22232F"/>
+                                <Setter Property="Foreground" Value="White"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -60,628 +60,518 @@
             </Setter>
         </Style>
 
-
-        <!-- Custom Scrollbar -->
-        <Style TargetType="{x:Type ScrollBar}">
-            <Setter Property="Width" Value="8"/>
-            <Setter Property="MinWidth" Value="0"/>
+        <Style x:Key="SidebarButtonStyle" TargetType="Button">
+            <Setter Property="Height" Value="46"/>
+            <Setter Property="Margin" Value="10,0,10,8"/>
             <Setter Property="Background" Value="Transparent"/>
-
+            <Setter Property="Foreground" Value="#A2A4B7"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type ScrollBar}">
-                        <Grid Background="Transparent"
-                              Width="{TemplateBinding Width}"
-                              HorizontalAlignment="Center">
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Root" Background="{TemplateBinding Background}" CornerRadius="10">
+                            <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="#1A1B26"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="#24223A"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
-                            <Track x:Name="PART_Track"
-                                   IsDirectionReversed="True">
+        <Style x:Key="ActiveSidebarButtonStyle" TargetType="Button" BasedOn="{StaticResource SidebarButtonStyle}">
+            <Setter Property="Background" Value="#24223A"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
 
-                                <Track.Thumb>
-                                    <Thumb>
-                                        <Thumb.Template>
-                                            <ControlTemplate TargetType="{x:Type Thumb}">
-                                                <Border Width="6"
-                                                        Background="#7C3AED"
-                                                        CornerRadius="4"
-                                                        HorizontalAlignment="Center"/>
-                                            </ControlTemplate>
-                                        </Thumb.Template>
-                                    </Thumb>
-                                </Track.Thumb>
+        <Style x:Key="CounterButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="30"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Background" Value="#20212D"/>
+            <Setter Property="Foreground" Value="#D7D8E2"/>
+            <Setter Property="BorderBrush" Value="#343545"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Root" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="#7454F8"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
-                            </Track>
+        <Style TargetType="ScrollBar">
+            <Setter Property="Width" Value="8"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollBar">
+                        <Track x:Name="PART_Track" IsDirectionReversed="True">
+                            <Track.Thumb>
+                                <Thumb>
+                                    <Thumb.Template>
+                                        <ControlTemplate TargetType="Thumb">
+                                            <Border Width="4" Background="#7454F8" CornerRadius="3"/>
+                                        </ControlTemplate>
+                                    </Thumb.Template>
+                                </Thumb>
+                            </Track.Thumb>
+                        </Track>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ProgressStyle" TargetType="ProgressBar">
+            <Setter Property="Height" Value="5"/>
+            <Setter Property="Background" Value="#292A38"/>
+            <Setter Property="Foreground" Value="#8B5CF6"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ProgressBar">
+                        <Grid>
+                            <Border Background="{TemplateBinding Background}" CornerRadius="3"/>
+                            <Grid x:Name="PART_Track" ClipToBounds="True">
+                                <Border x:Name="PART_Indicator" HorizontalAlignment="Left" Background="{TemplateBinding Foreground}" CornerRadius="3"/>
+                            </Grid>
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
 
-
-        <!-- Recipe / Item Card Style -->
-        <Style x:Key="CardBorderStyle" TargetType="Border">
-            <Setter Property="Width" Value="210"/>
-            <Setter Property="MinHeight" Value="160"/>
-            <Setter Property="Margin" Value="0,0,15,15"/>
-            <Setter Property="Padding" Value="18"/>
-            <Setter Property="Background" Value="#151f33"/>
-            <Setter Property="BorderBrush" Value="#8e51ff"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="10"/>
-        </Style>
-
-
-        <!-- Profile Stat Card Styles -->
-        <Style x:Key="StatCardStyle" TargetType="Border">
-            <Setter Property="Background" Value="#111827"/>
-            <Setter Property="BorderBrush" Value="#8e51ff"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="10"/>
-            <Setter Property="Padding" Value="18"/>
-            <Setter Property="Margin" Value="0,0,15,0"/>
-        </Style>
-
-        <Style x:Key="StatLabelTextStyle" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="#A78BFA"/>
-            <Setter Property="FontSize" Value="13"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-        </Style>
-
-        <Style x:Key="StatValueTextStyle" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontSize" Value="20"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Margin" Value="0,10,0,0"/>
-        </Style>
-
-        <Style x:Key="StatSubTextStyle" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="#D1D5DB"/>
-            <Setter Property="FontSize" Value="14"/>
-        </Style>
-
-        <Style x:Key="CounterButtonStyle" TargetType="Button">
-            <Setter Property="Width" Value="28"/>
-            <Setter Property="Height" Value="28"/>
-            <Setter Property="Background" Value="#111827"/>
-            <Setter Property="Foreground" Value="#D1D5DB"/>
-            <Setter Property="BorderBrush" Value="#8e51ff"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Cursor" Value="Hand"/>
-
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="ButtonBorder"
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="6">
-
-                            <ContentPresenter HorizontalAlignment="Center"
-                                      VerticalAlignment="Center"/>
-                        </Border>
-
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="ButtonBorder"
-                                Property="Background"
-                                Value="#1F2937"/>
-                                <Setter Property="Foreground"
-                                Value="White"/>
-                            </Trigger>
-
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="ButtonBorder"
-                                Property="Background"
-                                Value="#7C3AED"/>
-                                <Setter Property="Foreground"
-                                Value="White"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-
-        <!-- Item Card Template -->
-        <DataTemplate x:Key="ItemCardTemplate">
-            <Border Style="{StaticResource CardBorderStyle}">
-                <StackPanel>
-                    <TextBlock Text="{Binding Name}"
-                               FontSize="20"
-                               FontWeight="Bold"
-                               TextWrapping="Wrap"/>
-
-                    <TextBlock Text="Bauteil-Info:"
-                               FontSize="14"
-                               FontWeight="Bold"
-                               Margin="0,18,0,8"/>
-
-                    <TextBlock Text="{Binding Info}"
-                               FontSize="13"
-                               TextWrapping="Wrap"/>
-                </StackPanel>
-            </Border>
-        </DataTemplate>
-
-
-        <!-- Recipe Card Template -->
         <DataTemplate x:Key="RecipeCardTemplate">
-            <Border Style="{StaticResource CardBorderStyle}">
-                <StackPanel>
-                    <TextBlock Text="{Binding Name}"
-                       FontSize="20"
-                       FontWeight="Bold"
-                       Foreground="#F8FAFC"
-                       TextWrapping="Wrap"/>
+            <Border Width="310"
+                    Height="300"
+                    Margin="0,0,16,16"
+                    Padding="18"
+                    Background="{StaticResource CardBrush}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="14">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-                    <TextBlock Text="Benötigte Materialien:"
-                       FontSize="14"
-                       FontWeight="Bold"
-                       Foreground="#F8FAFC"
-                       Margin="0,18,0,8"/>
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="{Binding Name}" Foreground="{StaticResource PrimaryTextBrush}" FontSize="18" FontWeight="SemiBold"/>
+                            <TextBlock Text="{Binding MaterialCountText}" Foreground="#737589" FontSize="11" Margin="0,4,0,0"/>
+                        </StackPanel>
+                        <Border Grid.Column="1" Padding="12,6" Background="#322A1B" CornerRadius="12">
+                            <TextBlock Text="{Binding StatusText}" FontSize="10" FontWeight="SemiBold">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Foreground" Value="#F2C166"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsBuildable}" Value="True">
+                                                <Setter Property="Foreground" Value="#72E2B8"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Border>
+                    </Grid>
 
-                    <ItemsControl ItemsSource="{Binding Materials}">
+                    <Grid Grid.Row="1" Margin="0,18,0,7">
+                        <TextBlock Text="Materialverfügbarkeit" Foreground="#77798C" FontSize="10" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding CoveragePercentText}" Foreground="#A78BFA" FontSize="11" FontWeight="SemiBold" HorizontalAlignment="Right"/>
+                    </Grid>
+                    <ProgressBar Grid.Row="2" Value="{Binding CoveragePercent, Mode=OneWay}" Maximum="100" Style="{StaticResource ProgressStyle}"/>
+
+                    <ItemsControl Grid.Row="3" ItemsSource="{Binding Materials}" Margin="0,12,0,8">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding DisplayText}"
-                                   FontSize="13"
-                                   TextWrapping="Wrap">
-
-                                    <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="Foreground" Value="#CBD5E1"/>
-
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsCovered}" Value="True">
-                                                    <Setter Property="Foreground" Value="#22C55E"/>
-                                                    <Setter Property="TextDecorations" Value="Strikethrough"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBlock.Style>
-
-                                </TextBlock>
+                                <Border Height="30" Margin="0,0,0,4" Padding="10,0" Background="{StaticResource CardInnerBrush}" CornerRadius="7">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="18"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Ellipse Width="9" Height="9" HorizontalAlignment="Left">
+                                            <Ellipse.Style>
+                                                <Style TargetType="Ellipse">
+                                                    <Setter Property="Fill" Value="{StaticResource OrangeBrush}"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsCovered}" Value="True">
+                                                            <Setter Property="Fill" Value="{StaticResource GreenBrush}"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Ellipse.Style>
+                                        </Ellipse>
+                                        <TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="11" VerticalAlignment="Center" TextTrimming="CharacterEllipsis">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Foreground" Value="#F1C479"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsCovered}" Value="True">
+                                                            <Setter Property="Foreground" Value="#BFC1CF"/>
+                                                            <Setter Property="TextDecorations" Value="Strikethrough"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                        <TextBlock Grid.Column="2" Text="{Binding AmountText}" FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Foreground" Value="#F59E0B"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsCovered}" Value="True">
+                                                            <Setter Property="Foreground" Value="#6F7286"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Grid>
+                                </Border>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                </StackPanel>
+
+                    <Grid Grid.Row="4">
+                        <Border Height="1" Background="#2A2B38" Margin="0,0,0,12"/>
+                        <TextBlock Text="Bauanleitung öffnen" Foreground="#A7A9BA" FontSize="11" FontWeight="SemiBold" Margin="0,15,0,0"/>
+                        <TextBlock Text="›" Foreground="#A78BFA" FontSize="20" HorizontalAlignment="Right" Margin="0,9,0,0"/>
+                    </Grid>
+                </Grid>
             </Border>
         </DataTemplate>
-
     </Window.Resources>
 
-
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="220"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-
-
-        <!-- Sidebar -->
-        <Border Grid.Column="0"
-                Background="#111827"
-                Padding="0">
-
-            <StackPanel>
-                <StackPanel Orientation="Horizontal"
-                            Margin="0,0,0,25"/>
-
-                <!-- Profil -->
-                <Button Tag="Profil"
-                        Style="{StaticResource SidebarButtonStyle}"
-                        Click="SidebarButton_Click">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="55"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <Image Grid.Column="0"
-                               Source="/Assets/user.png"
-                               Width="20"
-                               Height="20"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center"/>
-
-                        <TextBlock Grid.Column="1"
-                                   Text="Profil"
-                                   FontSize="14"
-                                   HorizontalAlignment="Left"
-                                   VerticalAlignment="Center"/>
-                    </Grid>
-                </Button>
-
-
-                <!-- Bauteile -->
-                <Button Tag="Bauteile"
-                        Style="{StaticResource SidebarButtonStyle}"
-                        Click="SidebarButton_Click">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="55"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <Image Grid.Column="0"
-                               Source="/Assets/book-open.png"
-                               Width="20"
-                               Height="20"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center"/>
-
-                        <TextBlock Grid.Column="1"
-                                   Text="Bauteile"
-                                   FontSize="14"
-                                   HorizontalAlignment="Left"
-                                   VerticalAlignment="Center"/>
-                    </Grid>
-                </Button>
-
-
-                <!-- Anleitungen -->
-                <Button Tag="Anleitungen"
-                        Style="{StaticResource SidebarButtonStyle}"
-                        Click="SidebarButton_Click">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="55"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <Image Grid.Column="0"
-                               Source="/Assets/puzzle.png"
-                               Width="20"
-                               Height="20"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center"/>
-
-                        <TextBlock Grid.Column="1"
-                                   Text="Anleitungen"
-                                   FontSize="14"
-                                   HorizontalAlignment="Left"
-                                   VerticalAlignment="Center"/>
-                    </Grid>
-                </Button>
-
-
-                <!-- Einstellungen -->
-                <Button Tag="Einstellungen"
-                        Style="{StaticResource SidebarButtonStyle}"
-                        Click="SidebarButton_Click">
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="55"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <Image Grid.Column="0"
-                               Source="/Assets/settings.png"
-                               Width="20"
-                               Height="20"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center"/>
-
-                        <TextBlock Grid.Column="1"
-                                   Text="Einstellungen"
-                                   FontSize="14"
-                                   HorizontalAlignment="Left"
-                                   VerticalAlignment="Center"/>
-                    </Grid>
-                </Button>
-            </StackPanel>
-        </Border>
-
-
-        <!-- Anleitungen View -->
-        <Grid x:Name="AnleitungenView"
-              Grid.Column="1"
-              Visibility="Visible"
-              d:Visibility="Visible"
-              Margin="25">
-
+    <Border x:Name="WindowBorder" Background="{StaticResource BackgroundBrush}" BorderBrush="#252632" BorderThickness="1" CornerRadius="18">
+        <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="60"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Border Grid.Row="0"
-                    Height="40"
-                    Margin="0,0,0,15"
-                    Background="Transparent"
-                    BorderBrush="#8e51ff"
-                    BorderThickness="1"
-                    CornerRadius="10">
-
-                <TextBox x:Name="SearchBox"
-                         FontSize="14"
-                         Padding="10,0"
-                         Background="Transparent"
-                         BorderThickness="0"
-                         Foreground="White"
-                         CaretBrush="White"
-                         VerticalContentAlignment="Center"
-                         KeyDown="SearchBox_KeyDown"/>
+            <Border Grid.Row="0" Background="#101117" BorderBrush="#272833" BorderThickness="0,0,0,1" MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="240"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Horizontal" Margin="18,0,0,0" VerticalAlignment="Center">
+                        <Image Source="/Assets/dragon.png" Width="38" Height="38" Stretch="Uniform"/>
+                        <StackPanel Margin="10,0,0,0" VerticalAlignment="Center">
+                            <TextBlock Text="BAUPLAN" Foreground="White" FontSize="14" FontWeight="Bold"/>
+                            <TextBlock Text="MANAGER" Foreground="#77798C" FontSize="9" FontWeight="SemiBold"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <Border Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,22,0" Padding="13,7" Background="#142B24" CornerRadius="15">
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse Width="8" Height="8" Fill="{StaticResource GreenBrush}" Margin="0,0,8,0"/>
+                            <TextBlock Text="Datenbank aktuell" Foreground="#73D9B5" FontSize="10" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                    <StackPanel Grid.Column="2" Orientation="Horizontal">
+                        <Button Content="—" Style="{StaticResource WindowButtonStyle}" Click="MinimizeButton_Click"/>
+                        <Button Content="□" Style="{StaticResource WindowButtonStyle}" Click="MaximizeButton_Click"/>
+                        <Button Content="×" Style="{StaticResource WindowButtonStyle}" Foreground="#EF5D68" Click="CloseButton_Click"/>
+                    </StackPanel>
+                </Grid>
             </Border>
 
-            <ScrollViewer Grid.Row="1"
-                          VerticalScrollBarVisibility="Auto"
-                          HorizontalScrollBarVisibility="Disabled">
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="240"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
-                <ItemsControl x:Name="RecipeCardsControl"
-                              ItemTemplate="{StaticResource RecipeCardTemplate}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                </ItemsControl>
-            </ScrollViewer>
-        </Grid>
+                <Border Grid.Column="0" Background="{StaticResource PanelBrush}" BorderBrush="#272833" BorderThickness="0,0,1,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <StackPanel Grid.Row="0">
+                            <TextBlock Text="HAUPTMENÜ" Foreground="#585A6D" FontSize="9" FontWeight="SemiBold" Margin="22,25,0,16"/>
+                            <Button Tag="Profil" Style="{StaticResource SidebarButtonStyle}" Click="SidebarButton_Click">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="46"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Image Source="/Assets/user.png" Width="20" Height="20"/>
+                                    <TextBlock Grid.Column="1" Text="Profil" FontSize="14" VerticalAlignment="Center"/>
+                                </Grid>
+                            </Button>
+                            <Button Tag="Bauteile" Style="{StaticResource SidebarButtonStyle}" Click="SidebarButton_Click">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="46"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Image Source="/Assets/book-open.png" Width="20" Height="20"/>
+                                    <TextBlock Grid.Column="1" Text="Bauteile" FontSize="14" VerticalAlignment="Center"/>
+                                </Grid>
+                            </Button>
+                            <Button Tag="Anleitungen" Style="{StaticResource ActiveSidebarButtonStyle}" Click="SidebarButton_Click">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="46"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Image Source="/Assets/puzzle.png" Width="20" Height="20"/>
+                                    <TextBlock Grid.Column="1" Text="Anleitungen" FontSize="14" VerticalAlignment="Center"/>
+                                </Grid>
+                            </Button>
+                            <Button Tag="Einstellungen" Style="{StaticResource SidebarButtonStyle}" Click="SidebarButton_Click">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="46"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Image Source="/Assets/settings.png" Width="20" Height="20"/>
+                                    <TextBlock Grid.Column="1" Text="Einstellungen" FontSize="14" VerticalAlignment="Center"/>
+                                </Grid>
+                            </Button>
+                        </StackPanel>
 
+                        <Border Grid.Row="1" Margin="16,28,16,0" Height="92" VerticalAlignment="Top" Padding="14" Background="#151620" CornerRadius="12">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <Ellipse Width="9" Height="9" Fill="{StaticResource GreenBrush}" Margin="0,0,9,0"/>
+                                    <TextBlock Text="Montageplatz 01" Foreground="#ECECF3" FontSize="12" FontWeight="SemiBold"/>
+                                </StackPanel>
+                                <TextBlock Text="Baupläne synchronisiert" Foreground="#797B8F" FontSize="10" Margin="0,13,0,0"/>
+                                <TextBlock Text="Zuletzt aktualisiert: gerade eben" Foreground="#5F6174" FontSize="9" Margin="0,7,0,0"/>
+                            </StackPanel>
+                        </Border>
 
-        <!-- Profil View -->
-        <Grid x:Name="ProfilView"
-              Grid.Column="1"
-              Visibility="Collapsed"
-              d:Visibility="Collapsed"
-              Margin="25">
-
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-
-            <TextBlock Grid.Row="0"
-                       Text="User Stats"
-                       Foreground="White"
-                       FontSize="24"
-                       FontWeight="Bold"
-                       Margin="0,0,0,20"/>
-
-            <UniformGrid Grid.Row="1"
-                         Columns="3"
-                         Margin="0,0,0,20">
-
-                <!-- Rarest -->
-                <Border Style="{StaticResource StatCardStyle}">
-                    <StackPanel>
-                        <TextBlock Text="Rarest"
-                                   Style="{StaticResource StatLabelTextStyle}"/>
-
-                        <TextBlock x:Name="RarestItemText"
-                                   Text=""
-                                   Style="{StaticResource StatValueTextStyle}"/>
-
-                        <TextBlock x:Name="RarestAmountText"
-                                   Text=""
-                                   Style="{StaticResource StatSubTextStyle}"/>
-                    </StackPanel>
+                        <Border Grid.Row="2" Margin="16,0,16,18" Padding="14" Background="#181725" CornerRadius="12">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="34"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Image Source="/Assets/shield-question-mark.png" Width="22" Height="22"/>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="Schnellzugriff" Foreground="#F1F1F7" FontSize="12" FontWeight="SemiBold"/>
+                                    <TextBlock Text="Strg + F durchsucht Baupläne" Foreground="#898B9E" FontSize="9" Margin="0,5,0,0"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </Grid>
                 </Border>
 
-
-                <!-- Total -->
-                <Border Style="{StaticResource StatCardStyle}">
-                    <StackPanel>
-                        <TextBlock Text="Total"
-                                   Style="{StaticResource StatLabelTextStyle}"/>
-
-                        <TextBlock x:Name="TotalOwnedText"
-                                   Text=""
-                                   Style="{StaticResource StatValueTextStyle}"/>
-
-                        <TextBlock Text=""
-                                   Style="{StaticResource StatSubTextStyle}"/>
-                    </StackPanel>
-                </Border>
-
-
-                <!-- Most Common -->
-                <Border Style="{StaticResource StatCardStyle}"
-                        Margin="0">
-
-                    <StackPanel>
-                        <TextBlock Text="Most Common"
-                                   Style="{StaticResource StatLabelTextStyle}"/>
-
-                        <TextBlock x:Name="MostCommonItemText"
-                                   Text=""
-                                   Style="{StaticResource StatValueTextStyle}"/>
-
-                        <TextBlock x:Name="MostCommonAmountText"
-                                   Text=""
-                                   Style="{StaticResource StatSubTextStyle}"/>
-                    </StackPanel>
-                </Border>
-            </UniformGrid>
-
-
-            <!-- Inventory Overview -->
-            <Border Grid.Row="2"
-                    Background="#111827"
-                    BorderBrush="#8e51ff"
-                    BorderThickness="1"
-                    CornerRadius="10"
-                    Padding="16">
-
-                <Grid>
+                <Grid x:Name="AnleitungenView" Grid.Column="1" Visibility="Visible" Margin="30,24,24,0">
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <StackPanel>
+                            <TextBlock Text="BAUANLEITUNGEN" Foreground="{StaticResource PurpleBrush}" FontSize="10" FontWeight="Bold"/>
+                            <TextBlock Text="Was möchtest du bauen?" Foreground="{StaticResource PrimaryTextBrush}" FontSize="28" FontWeight="Bold" Margin="0,8,0,0"/>
+                            <TextBlock Text="Wähle einen Bauplan und prüfe sofort, welche Materialien bereits vorhanden sind." Foreground="{StaticResource SecondaryTextBrush}" FontSize="12" Margin="0,7,0,0"/>
+                        </StackPanel>
+                        <Border HorizontalAlignment="Right" Width="276" Height="64" Background="#13141D" BorderBrush="#292A38" BorderThickness="1" CornerRadius="12">
+                            <UniformGrid Columns="3">
+                                <StackPanel VerticalAlignment="Center" Margin="16,0">
+                                    <TextBlock x:Name="RecipeCountText" Text="0" Foreground="White" FontSize="20" FontWeight="Bold"/>
+                                    <TextBlock Text="Baupläne" Foreground="#717386" FontSize="9"/>
+                                </StackPanel>
+                                <StackPanel VerticalAlignment="Center" Margin="16,0">
+                                    <TextBlock x:Name="BuildableCountText" Text="0" Foreground="{StaticResource GreenBrush}" FontSize="20" FontWeight="Bold"/>
+                                    <TextBlock Text="direkt baubar" Foreground="#717386" FontSize="9"/>
+                                </StackPanel>
+                                <StackPanel VerticalAlignment="Center" Margin="16,0">
+                                    <TextBlock x:Name="MaterialCountText" Text="0" Foreground="#A78BFA" FontSize="20" FontWeight="Bold"/>
+                                    <TextBlock Text="Materialien" Foreground="#717386" FontSize="9"/>
+                                </StackPanel>
+                            </UniformGrid>
+                        </Border>
+                    </Grid>
 
-                    <TextBlock Grid.Row="0"
-                               Text="Inventar"
-                               Foreground="White"
-                               FontSize="18"
-                               FontWeight="Bold"
-                               Margin="0,0,0,12"/>
+                    <Grid Grid.Row="1" Margin="0,28,0,22">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Border Height="48" Background="#14151E" BorderBrush="#333443" BorderThickness="1" CornerRadius="12" Margin="0,0,18,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="44"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="70"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="⌕" Foreground="{StaticResource PurpleBrush}" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBox x:Name="SearchBox" Grid.Column="1" Background="Transparent" BorderThickness="0" Foreground="White" CaretBrush="White" FontSize="12" VerticalContentAlignment="Center" TextChanged="SearchBox_TextChanged" KeyDown="SearchBox_KeyDown"/>
+                                <Border Grid.Column="2" Width="54" Height="24" Background="#22232F" CornerRadius="6">
+                                    <TextBlock Text="STRG F" Foreground="#898B9E" FontSize="9" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </Grid>
+                        </Border>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                            <Border Padding="24,0" Height="38" Background="#7454F8" CornerRadius="10">
+                                <TextBlock Text="Alle" Foreground="White" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                            </Border>
+                            <Border Padding="22,0" Height="38" Margin="10,0,0,0" Background="#171822" BorderBrush="#303141" BorderThickness="1" CornerRadius="10">
+                                <TextBlock Text="Baubar" Foreground="#A6A8BA" FontSize="12" VerticalAlignment="Center"/>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
 
-                    <ScrollViewer Grid.Row="1"
-                                  VerticalScrollBarVisibility="Auto"
-                                  HorizontalScrollBarVisibility="Disabled">
-
-                        <ItemsControl x:Name="ProfileInventoryControl">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid Margin="0,6">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="80"/>
-                                        </Grid.ColumnDefinitions>
-
-                                        <TextBlock Grid.Column="0"
-                                                   Text="{Binding Name}"
-                                                   Foreground="White"
-                                                   FontSize="14"/>
-
-                                        <TextBlock Grid.Column="1"
-                                                   Text="{Binding Amount}"
-                                                   Foreground="#A78BFA"
-                                                   FontWeight="Bold"
-                                                   Padding="0,0,10,0"
-                                                   HorizontalAlignment="Right"/>
-                                    </Grid>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,0,0,16">
+                        <TextBlock Text="Alle Baupläne" Foreground="#EDEDF3" FontSize="15" FontWeight="SemiBold"/>
+                        <TextBlock x:Name="ResultCountText" Text="0 Ergebnisse" Foreground="#696B7E" FontSize="11" Margin="14,3,0,0"/>
+                    </StackPanel>
+                    <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <ItemsControl x:Name="RecipeCardsControl" ItemTemplate="{StaticResource RecipeCardTemplate}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
                         </ItemsControl>
                     </ScrollViewer>
                 </Grid>
-            </Border>
-        </Grid>
 
-
-        <!-- Bauteile View -->
-        <Grid x:Name="BauteileView"
-              Grid.Column="1"
-              Visibility="Collapsed"
-              Margin="25">
-
-            <Border Background="Transparent"
-                    BorderBrush="#8e51ff"
-                    BorderThickness="1"
-                    CornerRadius="10"
-                    Padding="16">
-
-                <Grid>
+                <Grid x:Name="ProfilView" Grid.Column="1" Visibility="Collapsed" Margin="30">
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-
-                    <!-- Table Header -->
-                    <Grid Grid.Row="0"
-                          Margin="0,0,0,10">
-
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="160"/>
-                        </Grid.ColumnDefinitions>
-
-                        <TextBlock Grid.Column="0"
-                                   Text="Bauteil"
-                                   FontWeight="Bold"
-                                   Foreground="#D1D5DB"
-                                   FontSize="16"/>
-
-                        <TextBlock Grid.Column="1"
-                                   Text="Anzahl"
-                                   Foreground="#D1D5DB"
-                                   FontWeight="Bold"
-                                   FontSize="16"
-                                   HorizontalAlignment="Center"/>
-                    </Grid>
-
-
-                    <!-- Inventory List -->
-                    <ScrollViewer Grid.Row="1"
-                                  VerticalScrollBarVisibility="Auto"
-                                  HorizontalScrollBarVisibility="Disabled">
-
-                        <ItemsControl x:Name="InventoryItemsControl">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Border Background="Transparent"
-                                            BorderThickness="0"
-                                            Padding="0,10"
-                                            Margin="0,2">
-
-                                        <Grid>
+                    <TextBlock Text="Profil und Inventar" Foreground="White" FontSize="28" FontWeight="Bold" Margin="0,0,0,24"/>
+                    <UniformGrid Grid.Row="1" Columns="3" Margin="0,0,0,20">
+                        <Border Margin="0,0,14,0" Padding="18" Background="{StaticResource CardBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="12">
+                            <StackPanel>
+                                <TextBlock Text="Seltenstes Bauteil" Foreground="#A78BFA" FontWeight="SemiBold"/>
+                                <TextBlock x:Name="RarestItemText" Foreground="White" FontSize="20" FontWeight="Bold" Margin="0,10,0,0"/>
+                                <TextBlock x:Name="RarestAmountText" Foreground="#A7A9BA"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Margin="0,0,14,0" Padding="18" Background="{StaticResource CardBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="12">
+                            <StackPanel>
+                                <TextBlock Text="Gesamtanzahl" Foreground="#A78BFA" FontWeight="SemiBold"/>
+                                <TextBlock x:Name="TotalOwnedText" Foreground="White" FontSize="20" FontWeight="Bold" Margin="0,10,0,0"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Padding="18" Background="{StaticResource CardBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="12">
+                            <StackPanel>
+                                <TextBlock Text="Meistbesitztes Bauteil" Foreground="#A78BFA" FontWeight="SemiBold"/>
+                                <TextBlock x:Name="MostCommonItemText" Foreground="White" FontSize="20" FontWeight="Bold" Margin="0,10,0,0"/>
+                                <TextBlock x:Name="MostCommonAmountText" Foreground="#A7A9BA"/>
+                            </StackPanel>
+                        </Border>
+                    </UniformGrid>
+                    <Border Grid.Row="2" Padding="18" Background="{StaticResource CardBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="12">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <ItemsControl x:Name="ProfileInventoryControl">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0,7">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="160"/>
+                                                <ColumnDefinition Width="80"/>
                                             </Grid.ColumnDefinitions>
-
-                                            <TextBlock Grid.Column="0"
-                                                       Text="{Binding Name}"
-                                                       FontSize="14"
-                                                       Foreground="#D1D5DB"
-                                                       VerticalAlignment="Center"/>
-
-                                            <StackPanel Grid.Column="1"
-                                                        Orientation="Horizontal"
-                                                        HorizontalAlignment="Center">
-
-                                                <Button Content="-"
-                                                        Style="{StaticResource CounterButtonStyle}"
-                                                        Click="DecreaseAmount_Click"/>
-
-                                                <TextBlock Text="{Binding Amount}"
-                                                           Width="45"
-                                                           TextAlignment="Center"
-                                                           Foreground="#D1D5DB"
-                                                           VerticalAlignment="Center"
-                                                           FontSize="14"/>
-
-                                                <Button Content="+"
-                                                        Style="{StaticResource CounterButtonStyle}"
-                                                        Click="IncreaseAmount_Click"/>
-                                            </StackPanel>
+                                            <TextBlock Text="{Binding Name}" Foreground="#D7D8E2"/>
+                                            <TextBlock Grid.Column="1" Text="{Binding Amount}" Foreground="#A78BFA" FontWeight="Bold" HorizontalAlignment="Right"/>
                                         </Grid>
-                                    </Border>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </ScrollViewer>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Border>
                 </Grid>
-            </Border>
+
+                <Grid x:Name="BauteileView" Grid.Column="1" Visibility="Collapsed" Margin="30">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Margin="0,0,0,22">
+                        <TextBlock Text="Bauteile" Foreground="White" FontSize="28" FontWeight="Bold"/>
+                        <TextBlock Text="Trage ein, welche Materialien bereits am Arbeitsplatz vorhanden sind." Foreground="{StaticResource SecondaryTextBrush}" Margin="0,8,0,0"/>
+                    </StackPanel>
+                    <Border Grid.Row="1" Padding="18" Background="{StaticResource CardBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="12">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <ItemsControl x:Name="InventoryItemsControl">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Padding="12" Margin="0,0,0,6" Background="{StaticResource CardInnerBrush}" CornerRadius="8">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="150"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Text="{Binding Name}" Foreground="#D7D8E2" VerticalAlignment="Center"/>
+                                                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                                                    <Button Content="−" Style="{StaticResource CounterButtonStyle}" Click="DecreaseAmount_Click"/>
+                                                    <TextBlock Text="{Binding Amount}" Width="55" TextAlignment="Center" Foreground="White" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                                    <Button Content="+" Style="{StaticResource CounterButtonStyle}" Click="IncreaseAmount_Click"/>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Border>
+                </Grid>
+
+                <Grid x:Name="EinstellungenView" Grid.Column="1" Visibility="Collapsed" Margin="30">
+                    <StackPanel>
+                        <TextBlock Text="Einstellungen" Foreground="White" FontSize="28" FontWeight="Bold"/>
+                        <TextBlock Text="Weitere Optionen können hier später ergänzt werden." Foreground="{StaticResource SecondaryTextBrush}" Margin="0,8,0,24"/>
+                        <Border Width="480" Padding="20" HorizontalAlignment="Left" Background="{StaticResource CardBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="12">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="34"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Image Source="/Assets/square-pen.png" Width="22" Height="22"/>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="Bauanleitungen verwalten" Foreground="White" FontWeight="SemiBold"/>
+                                    <TextBlock Text="Das Hinzufügen und Bearbeiten ist laut Lastenheft optional." Foreground="#808295" FontSize="11" Margin="0,6,0,0"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </Grid>
         </Grid>
-
-
-        <!-- Einstellungen View -->
-        <Grid x:Name="EinstellungenView"
-              Grid.Column="1"
-              Visibility="Collapsed"
-              Margin="25">
-
-            <StackPanel>
-                <TextBlock Text="Neues scherenteil anlegen"
-                           Foreground="White"
-                           FontSize="24"
-                           FontWeight="Bold"
-                           Margin="0,0,0,20"/>
-
-                <TextBlock Text="Name"
-                           Foreground="White"/>
-
-                <TextBox x:Name="a"
-                         Height="40"
-                         Margin="0,5,0,15"/>
-
-                <Button Content="test"
-                        Width="120"
-                        Height="40"/>
-            </StackPanel>
-        </Grid>
-
-    </Grid>
+    </Border>
 </Window>
